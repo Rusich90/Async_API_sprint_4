@@ -6,7 +6,7 @@ pg_conf:
     - 'film_work'
     - 'person'
     - 'genre'
-es_url: 'http://localhost:9200/_bulk?filter_path=items.*.error'
+es_url: 'http://es:9200/_bulk?filter_path=items.*.error'
 backoff_start_time: 0.1
 backoff_border_time: 10
 backoff_factor: 2

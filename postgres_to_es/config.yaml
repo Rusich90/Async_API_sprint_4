@@ -1,0 +1,12 @@
+pg_conf:
+  state_file_path: 'state.json'
+  query_limit: 500
+  default_date: '2021-06-15'
+  tables:
+    - 'film_work'
+    - 'person'
+    - 'genre'
+es_url: 'http://es:9200/_bulk?filter_path=items.*.error'
+backoff_start_time: 0.1
+backoff_border_time: 10
+backoff_factor: 2

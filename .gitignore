@@ -133,3 +133,5 @@ dmypy.json
 
 # Postgres volume
 postgresql
+
+.DS_Store

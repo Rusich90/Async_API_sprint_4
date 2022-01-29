@@ -56,6 +56,12 @@ def load_data() -> None:
 
                 else:
                     """
+                    Обновление индексов с жанрами и персонами
+                    """
+                    json_list = parse_to_elastic(records_for_update, table)
+                    request_to_elastic(json_list)
+
+                    """
                     Запрос к вспомогательной таблице и запоминание оффсета для запроса пачками (зависит от query_limit)
                     """
                     offset = 0

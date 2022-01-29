@@ -40,7 +40,7 @@ class PostgresLoader:
             fw.created_at, 
             fw.updated_at, 
             json_agg(distinct jsonb_build_object('name', p.full_name, 'role', pfw.role, 'id', p.id)) as persons,
-            array_agg(distinct(g.name)) as genres
+            json_agg(distinct jsonb_build_object('id', g.id, 'name', g.name)) as genres
         FROM content.film_work fw
         LEFT JOIN content.person_film_work pfw ON pfw.film_work_id = fw.id 
         LEFT JOIN content.person p ON p.id = pfw.person_id
@@ -60,7 +60,7 @@ class PostgresLoader:
         :return: список айдишников по проверяемой таблице
         """
         query = """
-        SELECT id, updated_at
+        SELECT *
         FROM content.{table}
         WHERE updated_at > %s
         ORDER BY updated_at

@@ -46,14 +46,14 @@ def parse_to_elastic(records: list, table: str = None) -> str:
     :param table: название таблицы
     :return: возвращает список json'ов строкой
     """
-    table = 'movies' if not table else table
+    table = 'movie' if not table else table
     json_list = []
     for record in records:
         index_info = {'index': {'_index': table + 's', '_id': record['id']}}
         json_list.append(index_info)
         data = {'id': record['id']}
 
-        if table == 'movies':
+        if table == 'movie':
             directors_names, actors_names, writers_names, actors, writers, directors = [], [], [], [], [], []
             for person in record['persons']:
                 if person['role'] == 'director':

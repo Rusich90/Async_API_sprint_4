@@ -135,3 +135,5 @@ dmypy.json
 postgresql
 
 .DS_Store
+
+state.json

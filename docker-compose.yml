@@ -21,8 +21,8 @@ services:
 
   postgres_4:
     image: postgres:13
-    build: ./postgres
-    container_name: postgres-4
+    build: ./Docker-compose/postgres
+    container_name: postgres_4
     user: postgres
     env_file:
       - .env
@@ -31,6 +31,26 @@ services:
     volumes:
     - acc-db:/var/lib/postgresql/data
 
+  fast_api:
+    build: ./Docker-compose/fast_api
+    image: python:3.9.0-slim-buster
+    expose:
+    - 8000
+    volumes:
+    - ./src/:/src/
+    depends_on:
+    - es
+    env_file:
+    - ./.env
+
+#  postgres_to_es:
+#    image: postgres_to_es
+#    build: ./postgres_to_es
+#    container_name: postgres_to_es
+#    env_file:
+#    - .env
+#    depends_on:
+#    - postgres_4
 
 volumes:
   es-data:

@@ -135,3 +135,4 @@ dmypy.json
 postgresql
 
 .DS_Store
+Docker-compose/postgres_to_es/

@@ -136,4 +136,4 @@ postgresql
 
 .DS_Store
 
-state.json
+postgres_to_es/state.json

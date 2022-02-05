@@ -2,7 +2,7 @@ from elasticsearch import AsyncElasticsearch
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
-from api.api.v1 import genre
+from api.api.v1 import genre, person
 from core import config
 from db import elastic
 
@@ -24,3 +24,4 @@ async def shutdown():
     await elastic.es.close()
 
 app.include_router(genre.router, prefix='/api/v1/genres', tags=['genres'])
+app.include_router(person.router, prefix='/api/v1/persons', tags=['persons'])

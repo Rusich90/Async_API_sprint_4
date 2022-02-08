@@ -30,31 +30,31 @@ class PersonDetail(BaseModel):
 
 
 class MovieResponse(BaseModel):
-    scroll_id: str
+    search_after: Optional[str]
     count: int
     results: List[Movie]
 
 
 class PersonResponse(BaseModel):
-    scroll_id: str
+    search_after: Optional[str]
     count: int
     results: List[Person]
 
 
 @router.get('', response_model=PersonResponse)
-async def persons_list(size: int = 20, search: str = None, scroll_id: str = None,
+async def persons_list(size: int = 20, search: str = None, search_after: str = None,
                        person_service: PersonService = Depends(get_person_service)) -> PersonResponse:
-    persons = await person_service.get_all(size, search, scroll_id)
+    persons = await person_service.get_all(size, search, search_after)
     persons = [Person(id=person.id, name=person.name) for person in persons]
-    return PersonResponse(scroll_id=person_service.scroll, count=person_service.count, results=persons)
+    return PersonResponse(search_after=person_service.search_after, count=person_service.count, results=persons)
 
 
 @router.get('/{person_id}/movies', response_model=MovieResponse)
-async def genre_movies(person_id: str, size: int = 20, scroll_id: str = None,
+async def genre_movies(person_id: str, size: int = 20, search_after: str = None,
                        person_service: PersonService = Depends(get_person_service)) -> MovieResponse:
-    movies = await person_service.get_movies(person_id, size, scroll_id)
+    movies = await person_service.get_movies(person_id, size, search_after)
     movies = [Movie(id=movie.id, title=movie.title, imdb_rating=movie.imdb_rating) for movie in movies]
-    return MovieResponse(scroll_id=person_service.scroll, count=person_service.count, results=movies)
+    return MovieResponse(search_after=person_service.search_after, count=person_service.count, results=movies)
 
 
 @router.get('/{person_id}', response_model=PersonDetail)

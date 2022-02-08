@@ -1,6 +1,6 @@
 import orjson
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 
 def orjson_dumps(v, *, default):
     return orjson.dumps(v, default=default).decode()
@@ -13,7 +13,7 @@ class Film(BaseModel):
     id: str
     imdb_rating: float
     title: str
-    description: Optional[None] = str
+    description: str
     genres_names: list
     directors_names: list
     actors_names: list

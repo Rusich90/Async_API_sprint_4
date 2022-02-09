@@ -1,1 +1,0 @@
-pg_restore --dbname="movies_database" "/home/dumps/transfer.dmp" --data-only --format=c --single-transaction

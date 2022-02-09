@@ -1,11 +1,10 @@
 from typing import List, Optional
 
+import orjson
 from aioredis import Redis
+from core import config
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.exceptions import NotFoundError
-import orjson
-
-from core import config
 
 
 class Service:
@@ -34,7 +33,8 @@ class Service:
         movies = doc['hits']['hits']
         return movies
 
-    async def _get_all_records_from_elastic(self, param: dict, search: Optional[str], search_after: Optional[str]) -> List:
+    async def _get_all_records_from_elastic(self, param: dict, search: Optional[str],
+                                            search_after: Optional[str]) -> List:
         redis_id = param['index'] + str(param['size'])
         if search:
             redis_id = redis_id + search

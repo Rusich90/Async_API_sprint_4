@@ -1,16 +1,30 @@
-import orjson
-from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
-def orjson_dumps(v, *, default):
-    return orjson.dumps(v, default=default).decode()
+from models.custom_model import CustomModel
+from models.film import MovieDetail
 
-class Person(BaseModel):
+
+class Person(CustomModel):
     id: str
     name: str
     birth_date: Optional[None] = datetime
 
-    class Config:
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
+
+class PersonDetail(CustomModel):
+    id: str
+    name: str
+
+
+class PersonMovies(CustomModel):
+    id: str
+    name: str
+    actor: Optional[List[MovieDetail]]
+    writer: Optional[List[MovieDetail]]
+    director: Optional[List[MovieDetail]]
+
+
+class PersonList(CustomModel):
+    search_after: Optional[str]
+    count: int
+    results: List[Person]

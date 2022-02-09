@@ -1,15 +1,16 @@
 from functools import lru_cache
-
-from aioredis import Redis
-from elasticsearch import AsyncElasticsearch
-from fastapi import Depends
 from typing import Optional
 
+from aioredis import Redis
 from db.elastic import get_elastic
 from db.redis import get_redis
+from elasticsearch import AsyncElasticsearch
+from fastapi import Depends
 from models.film import Film
 
+
 FILM_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
+
 
 class FilmService:
     def __init__(self, redis: Redis, elastic: AsyncElasticsearch):
@@ -20,7 +21,6 @@ class FilmService:
         film = await self._film_from_cache(film_id)
         if not film:
             film = await self._get_film_from_elastic(film_id)
-            # print(film)
             if not film:
                 # Если он отсутствует в Elasticsearch, значит, фильма вообще нет в базе
                 return None
@@ -30,10 +30,6 @@ class FilmService:
 
     async def _get_film_from_elastic(self, film_id: str) -> Optional[Film]:
         doc = await self.elastic.get('movies', film_id)
-
-        print(doc)
-        print(type(doc))
-
         return Film(**doc['_source'])
 
     async def _film_from_cache(self, film_id: str) -> Optional[Film]:

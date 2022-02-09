@@ -134,6 +134,9 @@ dmypy.json
 # Postgres volume
 postgresql
 
+# Elastic volume
+elastic
+
 .DS_Store
 
 postgres_to_es/state.json

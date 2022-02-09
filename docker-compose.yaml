@@ -14,7 +14,7 @@ services:
     ports:
       - '9200:9200'
     volumes:
-      - ./elastic:/var/lib/postgresql/data
+      - ./elastic:/usr/share/elasticsearch/data
 
   etl:
     build: postgres_to_es

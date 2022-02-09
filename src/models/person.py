@@ -3,8 +3,10 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 
+
 def orjson_dumps(v, *, default):
     return orjson.dumps(v, default=default).decode()
+
 
 class Person(BaseModel):
     id: str

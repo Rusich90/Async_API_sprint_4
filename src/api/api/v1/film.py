@@ -1,11 +1,11 @@
-from db import elastic
+from http import HTTPStatus
+from fastapi import APIRouter, Depends, HTTPException
+
 from models.film import Film
 from services.film import FilmService, get_film_service
 
-from fastapi import APIRouter
-from fastapi import Depends
-
 router = APIRouter()
+
 
 @router.get('/{film_id}', response_model=Film)
 async def film_details(film_id: str, film_service: FilmService = Depends(get_film_service)) -> Film:

@@ -55,4 +55,3 @@ async def genre_details(genre_id: str, genre_service: GenreService = Depends(get
     if not genre:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='genre not found')
     return Genre(id=genre.id, name=genre.name)
-

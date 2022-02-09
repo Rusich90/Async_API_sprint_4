@@ -4,8 +4,8 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
-from services.person import PersonService, get_person_service
-
+from services.person import PersonService
+from services.person import get_person_service
 
 router = APIRouter()
 
@@ -71,4 +71,3 @@ async def person_details(person_id: str, person_service: PersonService = Depends
         if person.name in movie.directors_names:
             directors.append(Movie(id=movie.id, title=movie.title, imdb_rating=movie.imdb_rating))
     return PersonDetail(id=person.id, name=person.name, actor=actors, writer=writers, director=directors)
-

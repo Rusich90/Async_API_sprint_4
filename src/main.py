@@ -1,12 +1,16 @@
+import logging
+
 import aioredis
+import uvicorn
 from elasticsearch import AsyncElasticsearch
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
 from api.api.v1 import genre, person
 from core import config
-from db import elastic
-from db import redis
+from core.logger import LOGGING
+from db import elastic, redis
+
 
 app = FastAPI(
     title=config.PROJECT_NAME,
@@ -29,3 +33,14 @@ async def shutdown():
 
 app.include_router(genre.router, prefix='/api/v1/genres', tags=['genres'])
 app.include_router(person.router, prefix='/api/v1/persons', tags=['persons'])
+
+
+if __name__ == '__main__':
+    uvicorn.run(
+        'main:app',
+        host='0.0.0.0',
+        port=8000,
+        log_config=LOGGING,
+        log_level=logging.DEBUG,
+        reload=True,
+    )

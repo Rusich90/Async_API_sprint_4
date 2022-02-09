@@ -29,3 +29,15 @@ class Film(BaseModel):
     class Config:
         json_loads = orjson.loads
         json_dumps = orjson_dumps
+
+
+class MovieDetail(BaseModel):
+    id: str
+    title: str
+    imdb_rating: float
+
+
+class MovieList(BaseModel):
+    search_after: Optional[str]
+    count: int
+    results: List[MovieDetail]

@@ -1,8 +1,9 @@
+from http import HTTPStatus
+
+from fastapi import APIRouter, Depends, HTTPException
+
 from models.film import Film
 from services.film import FilmService, get_film_service
-
-from fastapi import APIRouter
-from fastapi import Depends
 
 router = APIRouter()
 

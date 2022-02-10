@@ -1,17 +1,17 @@
+import copy
+import hashlib
 from functools import lru_cache
+from typing import Optional
 
 from aioredis import Redis
-import copy
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.client import IndicesClient
 from fastapi import Depends
-import hashlib
-from typing import Optional
 
 from db.elastic import get_elastic
 from db.redis import get_redis
-from models.keyword import Keyword, PageData, KeywordCash
 from models.film import Film
+from models.keyword import Keyword, KeywordCash, PageData
 
 
 KEYWORD_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут

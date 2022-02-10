@@ -6,7 +6,7 @@ from elasticsearch import AsyncElasticsearch
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
-from api.api.v1 import genre, person
+from api.api.v1 import genre, person, film, keyword
 from core import config
 from core.logger import LOGGING
 from db import elastic, redis

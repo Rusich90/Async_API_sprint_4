@@ -1,9 +1,9 @@
 from functools import lru_cache
+from typing import Optional
 
 from aioredis import Redis
 from elasticsearch import AsyncElasticsearch
 from fastapi import Depends
-from typing import Optional
 
 from db.elastic import get_elastic
 from db.redis import get_redis

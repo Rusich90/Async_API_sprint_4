@@ -1,14 +1,15 @@
+import orjson
+from pydantic import BaseModel
 from typing import List, Optional
 
-from models.custom_model import CustomModel
+def orjson_dumps(v, *, default):
+    return orjson.dumps(v, default=default).decode()
 
-
-class NameId(CustomModel):
+class NameId(BaseModel):
     id: str
     name: str
 
-
-class Film(CustomModel):
+class Film(BaseModel):
     id: str
     imdb_rating: float
     title: str
@@ -22,14 +23,6 @@ class Film(CustomModel):
     writers: List[NameId]
     genres: List[NameId]
 
-
-class MovieDetail(CustomModel):
-    id: str
-    title: str
-    imdb_rating: float
-
-
-class MovieList(CustomModel):
-    search_after: Optional[str]
-    count: int
-    results: List[MovieDetail]
+    class Config:
+        json_loads = orjson.loads
+        json_dumps = orjson_dumps

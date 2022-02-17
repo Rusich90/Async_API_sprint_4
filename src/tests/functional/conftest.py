@@ -25,7 +25,7 @@ class HTTPResponse:
 
 
 @pytest.yield_fixture(scope="session")
-def event_loop(request):
+def event_loop():
     """Create an instance of the default event loop for each test case."""
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
@@ -52,7 +52,7 @@ async def redis_clear(redis_client):
     await redis_client.flushall()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session', autouse=True)
 async def create_index(es_client):
     await es_client.indices.create(index='genres', body=genres_index)
     await es_client.indices.create(index='persons', body=persons_index)
@@ -74,7 +74,7 @@ async def session():
 def make_get_request(session):
     async def inner(method: str, params: dict = None) -> HTTPResponse:
         params = params or {}
-        url = SERVICE_URL + '/api/v1' + method  # в боевых системах старайтесь так не делать!
+        url = SERVICE_URL + '/api/v1' + method
         async with session.get(url, params=params) as response:
             return HTTPResponse(
                 body=await response.json(),

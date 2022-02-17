@@ -15,8 +15,9 @@ class PersonService(Service):
 
     async def get_by_id(self, person_id: str) -> Optional[Person]:
         person = await self._get_record_from_elastic('persons', person_id)
-        movies = await self.get_movies(person_id=person_id, size=500, search_after=None, detail=True)
-        return Person(**person['_source']), movies
+        if person:
+            person = Person(**person['_source'])
+        return person
 
     async def get_all(self, size: int, search: Optional[str],
                       search_after: Optional[str]) -> Optional[List[Person]]:

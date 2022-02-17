@@ -28,9 +28,10 @@ async def genre_movies(person_id: str, size: int = 20, search_after: str = None,
 
 @router.get('/{person_id}', response_model=PersonMovies)
 async def person_details(person_id: str, person_service: PersonService = Depends(get_person_service)) -> PersonMovies:
-    person, movies = await person_service.get_by_id(person_id)
+    person = await person_service.get_by_id(person_id)
     if not person:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='person not found')
+    movies = await person_service.get_movies(person_id=person_id, size=500, search_after=None, detail=True)
     actors, writers, directors = [], [], []
     for movie in movies:
         if person.name in movie.actors_names:

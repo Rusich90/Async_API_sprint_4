@@ -35,7 +35,6 @@ async def test_persons_search(make_get_request, redis_clear):
     response = await make_get_request('/persons/?search=oumakhlouf')
 
     assert response.status == 200
-    print(response.body)
     assert response.body['count'] == 1
     assert len(response.body['results']) == 1
     assert response.body['results'][0]['id'] == 'd115d4c3-daf9-45ba-8034-1eb07b3be2f3'

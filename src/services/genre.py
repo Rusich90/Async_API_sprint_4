@@ -15,7 +15,9 @@ class GenreService(Service):
 
     async def get_by_id(self, genre_id: str) -> Optional[Genre]:
         genre = await self._get_record_from_elastic('genres', genre_id)
-        return Genre(**genre['_source'])
+        if genre:
+            genre = Genre(**genre['_source'])
+        return genre
 
     async def get_all(self, size: int, search: Optional[str],
                       search_after: Optional[str]) -> Optional[List[Genre]]:

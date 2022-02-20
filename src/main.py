@@ -6,7 +6,7 @@ from elasticsearch import AsyncElasticsearch
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
-from api.v1 import genre, person, film, keyword
+from api.v1 import genre, person, movie
 from core import config
 from core.logger import LOGGING
 from db import elastic, redis
@@ -33,8 +33,7 @@ async def shutdown():
 
 app.include_router(genre.router, prefix='/api/v1/genres', tags=['genres'])
 app.include_router(person.router, prefix='/api/v1/persons', tags=['persons'])
-app.include_router(film.router, prefix='/api/v1/film', tags=['film'])
-app.include_router(keyword.router, prefix='/api/v1/keyword', tags=['keyword'])
+app.include_router(movie.router, prefix='/api/v1/movies', tags=['movie'])
 
 
 if __name__ == '__main__':

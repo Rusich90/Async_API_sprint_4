@@ -23,11 +23,12 @@ class AbstractService(ABC):
         pass
 
     @abstractmethod
-    async def get_all_by_index(self, size: int, search: Optional[str], search_after: Optional[str]):
+    async def get_all_by_index(self, path: str, size: int, search: Optional[str], search_after: Optional[str]):
         pass
 
     @abstractmethod
-    async def get_movies(self, record_id: str, size: int, search_after: Optional[str], detail: Optional[bool]):
+    async def get_movies(self, path: str, record_id: str, size: int,
+                         search_after: Optional[str]):
         pass
 
 
@@ -35,10 +36,12 @@ class Service(AbstractService):
     def __init__(self, database: AbstractDataBase):
         super().__init__(database)
 
-    async def set_pagination_and_count(self, doc: Dict, movies: bool = None) -> None:
+    async def set_pagination_and_count(self, doc: Dict, movies: bool = None, score: bool = None) -> None:
         if len(doc['hits']['hits']) > 0:
             self.pagination = doc['hits']['hits'][-1]['_source']['id']
-            if movies:
+            if movies and score:
+                self.pagination = f"{doc['hits']['hits'][-1]['_score']}_{self.pagination}"
+            elif movies:
                 self.pagination = f"{doc['hits']['hits'][-1]['_source']['imdb_rating']}_{self.pagination}"
         else:
             self.pagination = None
@@ -47,46 +50,58 @@ class Service(AbstractService):
     async def get_by_id(self, record_id: str):
         raise NotImplementedError()
 
-    async def get_all_by_index(self, size: int, search: Optional[str], search_after: Optional[str]):
+    async def get_all_by_index(self, path: str, size: int, search: Optional[str], search_after: Optional[str]):
         raise NotImplementedError()
 
-    async def get_movies(self, record_id: str, size: int, search_after: Optional[str], detail: Optional[bool]):
+    async def get_movies(self, path: str, record_id: str, size: int, search_after: Optional[str]):
         raise NotImplementedError()
 
-    async def _get_all(self, index: str, size: int, search: Optional[str], search_after: Optional[str]):
+    async def _get_all(self,
+                       path: str,
+                       index: str,
+                       size: int,
+                       search: Optional[str],
+                       search_after: Optional[str]):
         param = {
             'index': index,
-            'sort': 'id:asc',
+            'sort': ["imdb_rating:desc", "id:asc"] if index == 'movies' else 'id:asc',
             'size': size,
             'body': {}
         }
-        if search:
+
+        if search and index == 'movies':
+            param['body'] = {"query": {"match": {"title": search}}}
+        elif search:
             param['body'] = {"query": {"match": {"name": search}}}
+
         if search_after:
-            param['body']['search_after'] = [search_after]
-        records = await self.database.get_all(param, search, search_after)
-        await self.set_pagination_and_count(records)
+            param['body']['search_after'] = search_after.split('_') if index == 'movies' else [search_after]
+
+        movie = True if index == 'movies' else False
+
+        print(path)
+        print(param)
+
+        records = await self.database.get_all(path, param)
+        await self.set_pagination_and_count(records, movie)
         return records
 
-    async def _get_movies(self, record_id: str,
+    async def _get_movies(self,
+                          path: str,
                           size: int,
                           body: Dict,
-                          search_after: Optional[str],
-                          detail: bool = False):
+                          search_after: Optional[str] = None,
+                          score: Optional[bool] = False):
         param = {
             "index": "movies",
-            "sort": ["imdb_rating:desc", "id:asc"],
+            "sort": ["_score:desc" if score else "imdb_rating:desc", "id:asc"],
             "size": size,
             'body': body,
         }
 
-        cache_id = record_id + 'movies' + str(size)
-        if detail:
-            cache_id = cache_id + 'detail'
         if search_after:
-            cache_id = cache_id + search_after
             param['body']['search_after'] = search_after.split('_')
-        movies = await self.database.get_all(param=param, cache_key=cache_id)
-        await self.set_pagination_and_count(movies, True)
+        movies = await self.database.get_all(path, param)
+        await self.set_pagination_and_count(movies, True, score)
         return movies
 

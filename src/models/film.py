@@ -10,26 +10,34 @@ class NameId(CustomModel):
 
 class Film(CustomModel):
     id: str
-    imdb_rating: float
+    imdb_rating: Optional[float]
     title: str
     description: Optional[str]
-    genres_names: list
-    directors_names: list
-    actors_names: list
-    writers_names: list
+    genres_names: List[str]
+    directors_names: List[str]
+    actors_names: List[str]
+    writers_names: List[str]
     actors: List[NameId]
     directors: List[NameId]
     writers: List[NameId]
     genres: List[NameId]
 
 
-class MovieDetail(CustomModel):
+class MovieBaseDetail(CustomModel):
     id: str
     title: str
     imdb_rating: float
 
 
+class MovieAllDetail(MovieBaseDetail):
+    description: Optional[str]
+    genres: List[NameId]
+    actors: List[NameId]
+    directors: List[NameId]
+    writers: List[NameId]
+
+
 class MovieList(CustomModel):
     pagination: Optional[str]
     count: int
-    results: List[MovieDetail]
+    results: List[MovieBaseDetail]

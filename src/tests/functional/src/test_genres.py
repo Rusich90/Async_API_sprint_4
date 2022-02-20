@@ -49,8 +49,8 @@ async def test_genres_list_page(make_get_request, redis_clear):
 
 
 @pytest.mark.asyncio
-async def test_genres_list_search_after(make_get_request, redis_clear):
-    response = await make_get_request('/genres/?size=3&search_after=6c162475-c7ed-4461-9184-001ef3d9f26e')
+async def test_genres_list_pagination(make_get_request, redis_clear):
+    response = await make_get_request('/genres/?size=3&pagination=6c162475-c7ed-4461-9184-001ef3d9f26e')
 
     assert response.status == 200
     assert response.body['count'] == 4
@@ -78,9 +78,9 @@ async def test_genre_movies_page(make_get_request, redis_clear):
 
 
 @pytest.mark.asyncio
-async def test_genre_movies_search_after(make_get_request, redis_clear):
+async def test_genre_movies_pagination(make_get_request, redis_clear):
     response = await make_get_request(
-        '/genres/120a21cf-9097-479e-904a-13dd7198c1dd/movies/?size=1&search_after=8.7_d755d600-296a-4c91-98b9-17107a5e63f5'
+        '/genres/120a21cf-9097-479e-904a-13dd7198c1dd/movies/?size=1&pagination=8.7_d755d600-296a-4c91-98b9-17107a5e63f5'
     )
 
     assert response.status == 200

@@ -19,8 +19,7 @@ class AbstractDataBase(ABC):
         pass
 
     @abstractmethod
-    async def get_all(self, param: Dict, search: Optional[str] = None,
-                      search_after: Optional[str] = None, cache_key: str = None) -> Dict:
+    async def get_all(self, path: str, param: Dict) -> Dict:
         pass
 
 
@@ -40,14 +39,8 @@ class ElasticDataBase(AbstractDataBase):
             await self.cache.set(record_id, record)
         return record
 
-    async def get_all(self, param: Dict, search: Optional[str] = None,
-                      search_after: Optional[str] = None, cache_key: str = None) -> Dict:
-        if not cache_key:
-            cache_key = param['index'] + str(param['size'])
-        if search:
-            cache_key = cache_key + search
-        if search_after:
-            cache_key = cache_key + search_after
+    async def get_all(self, path: str, param: Dict) -> Dict:
+        cache_key = path
         records = await self.cache.get(cache_key)
         if not records:
             records = await self.elastic.search(**param)

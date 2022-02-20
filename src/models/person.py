@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional, List
 
 from models.custom_model import CustomModel
-from models.film import MovieDetail
+from models.film import MovieBaseDetail
 
 
 class Person(CustomModel):
@@ -19,9 +19,9 @@ class PersonDetail(CustomModel):
 class PersonMovies(CustomModel):
     id: str
     name: str
-    actor: Optional[List[MovieDetail]]
-    writer: Optional[List[MovieDetail]]
-    director: Optional[List[MovieDetail]]
+    actor: Optional[List[MovieBaseDetail]]
+    writer: Optional[List[MovieBaseDetail]]
+    director: Optional[List[MovieBaseDetail]]
 
 
 class PersonList(CustomModel):

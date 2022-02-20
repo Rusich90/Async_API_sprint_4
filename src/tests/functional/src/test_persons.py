@@ -52,8 +52,8 @@ async def test_persons_list_page(make_get_request, redis_clear):
 
 
 @pytest.mark.asyncio
-async def test_persons_list_search_after(make_get_request, redis_clear):
-    response = await make_get_request('/persons/?size=5&search_after=a5a8f573-3cee-4ccc-8a2b-91cb9f55250a')
+async def test_persons_list_pagination(make_get_request, redis_clear):
+    response = await make_get_request('/persons/?size=5&pagination=a5a8f573-3cee-4ccc-8a2b-91cb9f55250a')
 
     assert response.status == 200
     assert response.body['count'] == 8
@@ -81,9 +81,9 @@ async def test_person_movies_page(make_get_request, redis_clear):
 
 
 @pytest.mark.asyncio
-async def test_person_movies_search_after(make_get_request, redis_clear):
+async def test_person_movies_pagination(make_get_request, redis_clear):
     response = await make_get_request(
-        '/persons/a5a8f573-3cee-4ccc-8a2b-91cb9f55250a/movies/?size=1&search_after=8.2_daae47e4-cbd0-4ffd-a150-55201b357d5b'
+        '/persons/a5a8f573-3cee-4ccc-8a2b-91cb9f55250a/movies/?size=1&pagination=8.2_daae47e4-cbd0-4ffd-a150-55201b357d5b'
     )
 
     assert response.status == 200

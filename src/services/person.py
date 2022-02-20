@@ -21,12 +21,12 @@ class PersonService(Service):
             person = Person(**person['_source'])
         return person
 
-    async def get_all_by_index(self, size: int, search: Optional[str],
+    async def get_all_by_index(self, path: str, size: int, search: Optional[str],
                                search_after: Optional[str]) -> Optional[List[Person]]:
-        persons = await self._get_all('persons', size, search, search_after)
+        persons = await self._get_all(path, 'persons', size, search, search_after)
         return [Person(**person['_source']) for person in persons['hits']['hits']]
 
-    async def get_movies(self, person_id: str, size: int, search_after: Optional[str],
+    async def get_movies(self, path: str,  person_id: str, size: int, search_after: Optional[str],
                          detail: bool = False) -> Optional[List[Film]]:
         body = {
             "query": {
@@ -69,7 +69,7 @@ class PersonService(Service):
                 }
             }
         }
-        movies = await self._get_movies(person_id, size, body, search_after, detail)
+        movies = await self._get_movies(path, size, body, search_after)
         return [Film(**movie['_source']) for movie in movies['hits']['hits']]
 
 

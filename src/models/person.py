@@ -25,6 +25,6 @@ class PersonMovies(CustomModel):
 
 
 class PersonList(CustomModel):
-    search_after: Optional[str]
+    pagination: Optional[str]
     count: int
     results: List[Person]

@@ -47,7 +47,7 @@ async def test_persons_list_page(make_get_request, redis_clear):
 
     assert response.status == 200
     assert response.body['count'] == 8
-    assert response.body['search_after'] == 'a5a8f573-3cee-4ccc-8a2b-91cb9f55250a'
+    assert response.body['pagination'] == 'a5a8f573-3cee-4ccc-8a2b-91cb9f55250a'
     assert len(response.body['results']) == 5
 
 
@@ -57,7 +57,7 @@ async def test_persons_list_search_after(make_get_request, redis_clear):
 
     assert response.status == 200
     assert response.body['count'] == 8
-    assert response.body['search_after'] == 'e424a80e-4cf6-4ada-8409-f82056a54564'
+    assert response.body['pagination'] == 'e424a80e-4cf6-4ada-8409-f82056a54564'
     assert len(response.body['results']) == 3
 
 
@@ -76,7 +76,7 @@ async def test_person_movies_page(make_get_request, redis_clear):
 
     assert response.status == 200
     assert response.body['count'] == 2
-    assert response.body['search_after'] == '8.2_daae47e4-cbd0-4ffd-a150-55201b357d5b'
+    assert response.body['pagination'] == '8.2_daae47e4-cbd0-4ffd-a150-55201b357d5b'
     assert len(response.body['results']) == 1
 
 
@@ -88,5 +88,5 @@ async def test_person_movies_search_after(make_get_request, redis_clear):
 
     assert response.status == 200
     assert response.body['count'] == 2
-    assert response.body['search_after'] == '6.2_d6a7409f-87cd-49d7-8803-951a7352c2ce'
+    assert response.body['pagination'] == '6.2_d6a7409f-87cd-49d7-8803-951a7352c2ce'
     assert len(response.body['results']) == 1

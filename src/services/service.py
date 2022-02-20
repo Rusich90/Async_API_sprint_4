@@ -1,81 +1,92 @@
-from typing import List, Optional
+from abc import ABC, abstractmethod
+from typing import Dict, Optional
 
-import orjson
-from aioredis import Redis
 from core import config
-from elasticsearch import AsyncElasticsearch
-from elasticsearch.exceptions import NotFoundError
+from db.database import AbstractDataBase
 
 
-class Service:
-    def __init__(self, redis: Redis, elastic: AsyncElasticsearch):
-        self.elastic = elastic
-        self.redis = redis
+class AbstractService(ABC):
+
+    @abstractmethod
+    def __init__(self, database):
+        self.database = database
         self.expire = config.EXPIRE_TIME
-        self.search_after = None
+        self.pagination = None
         self.count = None
 
-    async def _add_scroll_and_count(self, doc: dict, movies: bool = None) -> None:
+    @abstractmethod
+    async def set_pagination_and_count(self, doc: Dict, movies: bool = None):
+        pass
+
+    @abstractmethod
+    async def get_by_id(self, record_id: str):
+        pass
+
+    @abstractmethod
+    async def get_all_by_index(self, size: int, search: Optional[str], search_after: Optional[str]):
+        pass
+
+    @abstractmethod
+    async def get_movies(self, record_id: str, size: int, search_after: Optional[str], detail: Optional[bool]):
+        pass
+
+
+class Service(AbstractService):
+    def __init__(self, database: AbstractDataBase):
+        super().__init__(database)
+
+    async def set_pagination_and_count(self, doc: Dict, movies: bool = None) -> None:
         if len(doc['hits']['hits']) > 0:
-            self.search_after = doc['hits']['hits'][-1]['_source']['id']
+            self.pagination = doc['hits']['hits'][-1]['_source']['id']
             if movies:
-                self.search_after = f"{doc['hits']['hits'][-1]['_source']['imdb_rating']}_{self.search_after}"
+                self.pagination = f"{doc['hits']['hits'][-1]['_source']['imdb_rating']}_{self.pagination}"
         else:
-            self.search_after = None
+            self.pagination = None
         self.count = doc['hits']['total']['value']
 
-    async def _get_movies_from_elastic(self, redis_id: str, param: dict) -> List:
-        doc = await self._get_record_from_cache(redis_id)
-        if not doc:
-            doc = await self.elastic.search(**param, index='movies')
-            await self._put_record_to_cache(redis_id, doc)
-        await self._add_scroll_and_count(doc=doc, movies=True)
-        movies = doc['hits']['hits']
-        return movies
+    async def get_by_id(self, record_id: str):
+        raise NotImplementedError()
 
-    async def _get_all_records_from_elastic(self, param: dict, search: Optional[str],
-                                            search_after: Optional[str]) -> List:
-        redis_id = param['index'] + str(param['size'])
-        if search:
-            redis_id = redis_id + search
-        if search_after:
-            redis_id = redis_id + search_after
-        doc = await self._get_record_from_cache(redis_id)
-        if not doc:
-            doc = await self.elastic.search(**param)
-            await self._put_record_to_cache(redis_id, doc)
-        await self._add_scroll_and_count(doc)
-        records = doc['hits']['hits']
-        return records
+    async def get_all_by_index(self, size: int, search: Optional[str], search_after: Optional[str]):
+        raise NotImplementedError()
 
-    async def _get_record_from_elastic(self, index_name: str, record_id: str) -> Optional[dict]:
-        record = await self._get_record_from_cache(record_id)
-        if not record:
-            try:
-                record = await self.elastic.get(index_name, record_id)
-            except NotFoundError:
-                return None
-            await self._put_record_to_cache(record_id, record)
-        return record
+    async def get_movies(self, record_id: str, size: int, search_after: Optional[str], detail: Optional[bool]):
+        raise NotImplementedError()
 
-    async def _get_all(self, index_name: str, size: int, search: Optional[str], search_after: Optional[str]) -> List:
-        param = {'index': index_name,
-                 'sort': 'id:asc',
-                 'size': size,
-                 'body': {}}
+    async def _get_all(self, index: str, size: int, search: Optional[str], search_after: Optional[str]):
+        param = {
+            'index': index,
+            'sort': 'id:asc',
+            'size': size,
+            'body': {}
+        }
         if search:
             param['body'] = {"query": {"match": {"name": search}}}
         if search_after:
             param['body']['search_after'] = [search_after]
-        records = await self._get_all_records_from_elastic(param, search, search_after)
+        records = await self.database.get_all(param, search, search_after)
+        await self.set_pagination_and_count(records)
         return records
 
-    async def _get_record_from_cache(self, redis_id: str) -> Optional[dict]:
-        data = await self.redis.get(redis_id)
-        if not data:
-            return None
-        data = orjson.loads(data)
-        return data
+    async def _get_movies(self, record_id: str,
+                          size: int,
+                          body: Dict,
+                          search_after: Optional[str],
+                          detail: bool = False):
+        param = {
+            "index": "movies",
+            "sort": ["imdb_rating:desc", "id:asc"],
+            "size": size,
+            'body': body,
+        }
 
-    async def _put_record_to_cache(self, redis_id: str, data: dict) -> None:
-        await self.redis.set(redis_id, orjson.dumps(data), expire=self.expire)
+        cache_id = record_id + 'movies' + str(size)
+        if detail:
+            cache_id = cache_id + 'detail'
+        if search_after:
+            cache_id = cache_id + search_after
+            param['body']['search_after'] = search_after.split('_')
+        movies = await self.database.get_all(param=param, cache_key=cache_id)
+        await self.set_pagination_and_count(movies, True)
+        return movies
+

@@ -44,7 +44,7 @@ async def test_genres_list_page(make_get_request, redis_clear):
 
     assert response.status == 200
     assert response.body['count'] == 4
-    assert response.body['search_after'] == '6c162475-c7ed-4461-9184-001ef3d9f26e'
+    assert response.body['pagination'] == '6c162475-c7ed-4461-9184-001ef3d9f26e'
     assert len(response.body['results']) == 3
 
 
@@ -54,7 +54,7 @@ async def test_genres_list_search_after(make_get_request, redis_clear):
 
     assert response.status == 200
     assert response.body['count'] == 4
-    assert response.body['search_after'] == 'b92ef010-5e4c-4fd0-99d6-41b6456272cd'
+    assert response.body['pagination'] == 'b92ef010-5e4c-4fd0-99d6-41b6456272cd'
     assert len(response.body['results']) == 1
 
 
@@ -73,7 +73,7 @@ async def test_genre_movies_page(make_get_request, redis_clear):
 
     assert response.status == 200
     assert response.body['count'] == 2
-    assert response.body['search_after'] == '8.7_d755d600-296a-4c91-98b9-17107a5e63f5'
+    assert response.body['pagination'] == '8.7_d755d600-296a-4c91-98b9-17107a5e63f5'
     assert len(response.body['results']) == 1
 
 
@@ -85,5 +85,5 @@ async def test_genre_movies_search_after(make_get_request, redis_clear):
 
     assert response.status == 200
     assert response.body['count'] == 2
-    assert response.body['search_after'] == '8.2_daae47e4-cbd0-4ffd-a150-55201b357d5b'
+    assert response.body['pagination'] == '8.2_daae47e4-cbd0-4ffd-a150-55201b357d5b'
     assert len(response.body['results']) == 1

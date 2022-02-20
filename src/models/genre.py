@@ -15,6 +15,6 @@ class GenreDetail(CustomModel):
 
 
 class GenreList(CustomModel):
-    search_after: Optional[str]
+    pagination: Optional[str]
     count: int
     results: List[GenreDetail]

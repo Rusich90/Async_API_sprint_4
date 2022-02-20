@@ -30,6 +30,6 @@ class MovieDetail(CustomModel):
 
 
 class MovieList(CustomModel):
-    search_after: Optional[str]
+    pagination: Optional[str]
     count: int
     results: List[MovieDetail]

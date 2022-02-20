@@ -12,9 +12,9 @@ from .testdata.es_data import data
 from .testdata.es_indexes import genres_index, movies_index, persons_index
 
 
-SERVICE_URL = 'http://fastapi:8000'
-ES_HOST = 'es:9200'
-REDIS_HOST = 'redis'
+SERVICE_URL = 'http://localhost:8000'
+ES_HOST = 'localhost:9200'
+REDIS_HOST = 'localhost'
 
 
 @dataclass

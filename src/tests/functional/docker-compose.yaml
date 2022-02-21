@@ -11,15 +11,15 @@ services:
       - redis
     command: uvicorn main:app --host 0.0.0.0 --port 8000
 
-#  tests:
-#    image: fastapi-image
-#    volumes:
-#      - ../../.:/code
-#    entrypoint: >
-#      sh -c "pip install -r tests/functional/requirements.txt
-#      && python3 tests/functional/utils/wait_for_redis.py
-#      && python3 tests/functional/utils/wait_for_es.py
-#      && pytest tests/functional/src -s"
+  tests:
+    image: fastapi-image
+    volumes:
+      - ../../.:/code
+    entrypoint: >
+      sh -c "pip install -r tests/functional/requirements.txt
+      && python3 tests/functional/utils/wait_for_redis.py
+      && python3 tests/functional/utils/wait_for_es.py
+      && pytest tests/functional/src -s"
 
   es:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0

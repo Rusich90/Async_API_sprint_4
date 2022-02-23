@@ -1,10 +1,14 @@
-import aioredis
 import asyncio
+from socket import gaierror
+
+import aioredis
+import backoff
 
 
+@backoff.on_exception(backoff.expo,
+                      gaierror)
 async def wait_redis():
-    redis = await aioredis.create_redis(('redis', 6379))
-    await redis.ping()
+    redis = await aioredis.create_connection(('redis', 6379))
     redis.close()
 
 

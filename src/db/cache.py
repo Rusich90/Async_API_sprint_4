@@ -9,8 +9,10 @@ from core import config
 
 class AbstractCache(ABC):
 
-    def __init__(self):
+    @abstractmethod
+    def __init__(self, cache):
         self.expire = config.EXPIRE_TIME
+        self.cache = cache
 
     @abstractmethod
     async def get(self, key: str) -> Dict:
@@ -24,7 +26,7 @@ class AbstractCache(ABC):
 class RedisCache(AbstractCache):
 
     def __init__(self, cache: Redis):
-        super().__init__()
+        self.expire = config.EXPIRE_TIME
         self.cache = cache
 
     async def get(self, key):

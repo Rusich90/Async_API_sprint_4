@@ -8,7 +8,7 @@ import pytest
 from elasticsearch import AsyncElasticsearch
 from multidict import CIMultiDictProxy
 
-from .testdata.es_data import data
+from .testdata.es_data import data_for_elastic
 from .testdata.es_indexes import genres_index, movies_index, persons_index
 
 
@@ -57,7 +57,7 @@ async def create_index(es_client):
     await es_client.indices.create(index='genres', body=genres_index)
     await es_client.indices.create(index='persons', body=persons_index)
     await es_client.indices.create(index='movies', body=movies_index)
-    await es_client.bulk(body=data)
+    await es_client.bulk(body=data_for_elastic())
     time.sleep(1)
     yield
     await es_client.indices.delete(index='_all')

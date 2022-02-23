@@ -29,7 +29,7 @@ async def movies_list(request: Request, size: int = 20, search: str = None, pagi
             summary='Поиск кинопроизведений',
             description='Полнотекстовый поиск кинопроизведений по совпадению в названии, описании или людях',
             )
-async def movie_details(request: Request, query: str, size: int = 20, pagination: str = None,
+async def movie_search(request: Request, query: str, size: int = 20, pagination: str = None,
                         service: AbstractService = Depends(get_movie_service)) -> MovieList:
     movies = await service.get_movies(str(request.url), query, size, pagination)
     movies = [MovieBaseDetail(id=movie.id, title=movie.title, imdb_rating=movie.imdb_rating) for movie in movies]

@@ -4,3 +4,4 @@ fastapi==0.61.1
 orjson==3.4.1
 uvicorn==0.12.2
 python-dotenv==0.19.0
+backoff==1.11.1

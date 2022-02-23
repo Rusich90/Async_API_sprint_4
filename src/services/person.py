@@ -1,16 +1,13 @@
 from functools import lru_cache
 from typing import List, Optional
 
-from aioredis import Redis
-from db.elastic import get_elastic
-from db.redis import get_redis
-from elasticsearch import AsyncElasticsearch
 from fastapi import Depends
+
+from db.database import AbstractDataBase
+from db.elastic import get_elastic
 from models.film import Film
 from models.person import Person
 from services.service import Service
-from db.database import ElasticDataBase
-from db.cache import RedisCache
 
 
 class PersonService(Service):
@@ -74,10 +71,5 @@ class PersonService(Service):
 
 
 @lru_cache()
-def get_person_service(
-        redis: Redis = Depends(get_redis),
-        elastic: AsyncElasticsearch = Depends(get_elastic),
-) -> PersonService:
-    cache = RedisCache(redis)
-    db = ElasticDataBase(cache, elastic)
+def get_person_service(db: AbstractDataBase = Depends(get_elastic)) -> PersonService:
     return PersonService(db)

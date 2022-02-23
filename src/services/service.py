@@ -79,9 +79,6 @@ class Service(AbstractService):
 
         movie = True if index == 'movies' else False
 
-        print(path)
-        print(param)
-
         records = await self.database.get_all(path, param)
         await self.set_pagination_and_count(records, movie)
         return records
